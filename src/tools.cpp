@@ -21,7 +21,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   if (estimations.empty())
 	   throw "Cannot operate on empty vector!";
   if( estimations.size()!=ground_truth.size())
-        throw "Matrices must be in the same size!";
+     throw "Matrices must be in the same size!";
         
 	//accumulate squared residuals
 	for(unsigned int i=0; i < estimations.size(); ++i){
@@ -55,14 +55,16 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
 	//TODO: YOUR CODE HERE 
 
-	//check division by zero
-	if (px == 0 || py == 0)
-	    cout<<"CalculateJacobian() - Error - Division by Zero"<<endl;
-	
 	// PRE-COMPUTING
   float coef1 = px*px+py*py;
   float coef2 = pow(coef1,1.5);
   float coef3 = sqrt(coef1);
+
+  //check division by zero
+  if (fabs(coef1) < 1e-4){
+      cout << "CalculateJacobian () - Error - Division by Zero" << endl;
+      return Hj;
+  }
 
 	//compute the Jacobian matrix
 	Hj(0,0) = px/sqrt(coef1);
