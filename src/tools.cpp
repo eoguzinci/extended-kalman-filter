@@ -15,6 +15,30 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   TODO:
     * Calculate the RMSE here.
   */
+	VectorXd rmse(4);
+  rmse << 0, 0, 0, 0;
+
+  if (estimations.empty())
+	   throw "Cannot operate on empty vector!";
+  if( estimations.size()!=ground_truth.size())
+        throw "Matrices must be in the same size!";
+        
+	//accumulate squared residuals
+	for(unsigned int i=0; i < estimations.size(); ++i){
+        // ... your code here
+        VectorXd residual = estimations[i] - ground_truth[i];
+        residual = residual.array()*residual.array();
+        rmse += residual;
+	}
+
+	//calculate the mean
+	// ... your code here
+    rmse = rmse/estimations.size();
+	//calculate the squared root
+	// ... your code here
+    rmse = rmse.array().sqrt();
+	//return the result
+	return rmse;
 }
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
@@ -22,4 +46,33 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   TODO:
     * Calculate a Jacobian here.
   */
+  MatrixXd Hj(3,4);
+	//recover state parameters
+	float px = x_state(0);
+	float py = x_state(1);
+	float vx = x_state(2);
+	float vy = x_state(3);
+
+	//TODO: YOUR CODE HERE 
+
+	//check division by zero
+	if (px == 0 || py == 0)
+	    cout<<"CalculateJacobian() - Error - Division by Zero"<<endl;
+	
+	// PRE-COMPUTING
+  float coef1 = px*px+py*py;
+  float coef2 = pow(coef1,1.5);
+  float coef3 = sqrt(coef1);
+
+	//compute the Jacobian matrix
+	Hj(0,0) = px/sqrt(coef1);
+	Hj(0,1) = py/sqrt(coef1);
+	Hj(1,0) = -py/(coef1);
+	Hj(1,1) = px/(coef1);
+	Hj(2,0) = py*(vx*py-vy*px)/coef2;
+	Hj(2,1) = px*(vy*px-vx*py)/coef2;
+	Hj(2,2) = px/coef3;
+	Hj(2,3) = py/coef3;
+
+	return Hj;
 }
