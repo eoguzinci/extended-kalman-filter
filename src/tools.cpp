@@ -67,10 +67,14 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   }
 
 	//compute the Jacobian matrix
-	Hj(0,0) = px/sqrt(coef1);
-	Hj(0,1) = py/sqrt(coef1);
+	Hj(0,0) = px/coef3;
+	Hj(0,1) = py/coef3;
+	Hj(0,2) = 0;
+	Hj(0,3) = 0;
 	Hj(1,0) = -py/(coef1);
 	Hj(1,1) = px/(coef1);
+	Hj(1,2) = 0;
+	Hj(1,3) = 0;
 	Hj(2,0) = py*(vx*py-vy*px)/coef2;
 	Hj(2,1) = px*(vy*px-vx*py)/coef2;
 	Hj(2,2) = px/coef3;
